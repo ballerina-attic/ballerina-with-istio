@@ -140,7 +140,7 @@ And also make sure that Ingress class is set to `` kubernetes.io/ingress.class: 
 - Now you are all set to deploy your Ballerina service on Istio. To do that you need to inject the sidecar into your service's deployment descriptors. You can do that by executing: 
 
 ``` 
-$istioctl kube-inject -f all-in-one.yaml -o time_service_k8s_istio_injected.yaml
+$istioctl kube-inject -f time_service_all_in_one.yaml -o time_service_k8s_istio_injected.yaml
 ```
 - Finally you can deploy the Istio sidecar injected service with: 
 ``` 
