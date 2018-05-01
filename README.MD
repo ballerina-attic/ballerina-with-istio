@@ -1,5 +1,5 @@
 
-# Running Ballerina services on Istio
+# Running Ballerina with Istio 
 [Istio](https://istio.io/) provides an easy way to create a network of deployed services with load balancing, service-to-service authentication, monitoring, and more, without requiring any changes in service code. 
 
 > In this guide you will learn about building a Ballerina service and deploying it on Istio service mesh.  
