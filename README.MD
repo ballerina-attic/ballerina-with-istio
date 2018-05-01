@@ -9,6 +9,7 @@ The following are the sections available in this guide.
 - [What you'll build](#what-youll-build)
 - [Prerequisites](#prerequisites)
 - [Implementation](#implementation)
+- [Deployment](#deployment)
 - [Testing](#testing)
 - [Observability](#observability)
 
@@ -126,7 +127,8 @@ deployment annotations.
 Run following command to deploy kubernetes artifacts:
 kubectl apply -f /Users/kasun/Dev/Source/git/kasun04/ballerina-guides/using-kubernetes/src/kubernetes/
 ````
-                                                                                                                                        
+    
+## Deployment                                                                                                                                    
 - By default Ballerina build creates Kubernetes artifacts in multiple .yaml files. For Istio we need to have a single file with all the artifacts. 
 Hence you can simply create a new file and copy the content of all he generated artifacts to it. For example you can refer [time_service_all_in_one.yaml](./kubernetes/time_service_all_in_one.yaml). 
 - Before deploying the service on Istio, you need to do few modifications to the deployment descriptors. 
