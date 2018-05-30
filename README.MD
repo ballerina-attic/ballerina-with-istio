@@ -93,7 +93,8 @@ endpoint http:Listener listener {
     image: "ballerina-time-service",
     name: "ballerina-time-service",
     dockerHost:"tcp://192.168.99.100:2376",
-    dockerCertPath:"/<Home Dir>/.minikube/certs"
+    dockerCertPath:"/<Home Dir>/.minikube/certs",
+    singleYAML:true
 }
 
 @http:ServiceConfig {basePath:"/localtime"}
