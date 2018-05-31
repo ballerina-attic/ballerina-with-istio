@@ -19,6 +19,25 @@ spec:
     app: "time_service"
   type: "NodePort"
 ---
+apiVersion: "extensions/v1beta1"
+kind: "Ingress"
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+  finalizers: []
+  labels:
+    app: "time_service"
+  name: "ballerina-time-service"
+  ownerReferences: []
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: "ballerina-time-service"
+          servicePort: 9095
+        path: "/localtime"
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -134,23 +153,4 @@ spec:
           optional: true
           secretName: istio.default
 status: {}
----
-apiVersion: "extensions/v1beta1"
-kind: "Ingress"
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: "istio"
-  finalizers: []
-  labels:
-    app: "time_service"
-  name: "ballerina-time-service"
-  ownerReferences: []
-spec:
-  rules:
-  - http:
-      paths:
-      - backend:
-          serviceName: "ballerina-time-service"
-          servicePort: 9095
-        path: "/localtime"
 ---

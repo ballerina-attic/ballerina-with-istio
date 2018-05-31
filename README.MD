@@ -114,12 +114,39 @@ service<http:Service> time bind listener {
 ```
 
 - Please note that we have to override the default Ingress class to `` ingressClass:"istio"`` and if you are using Minikube, you need to specify ``dockerHost``  and ``dockerCertPath`` in you 
-deployment annotations.
+deployment annotations. For example, you can have the following Kubernetes annotations. 
+
+``` 
+@kubernetes:Ingress {
+    name:"ballerina-time-service",
+    path:"/localtime",
+    ingressClass:"istio"
+}
+
+@kubernetes:Service {
+    serviceType:"NodePort",
+    name:"ballerina-time-service"
+}
+endpoint http:Listener listener {
+    port:9095
+};
+
+@kubernetes:Deployment {
+    image: "ballerina-time-service",
+    name: "ballerina-time-service",
+    dockerHost:"tcp://192.168.99.100:2376",
+    dockerCertPath:"/Users/kasun/.minikube/certs",
+    singleYAML:true
+}
+
+```
+- By default Ballerina build creates Kubernetes artifacts in multiple .yaml files. You can override this by adding ```  singleYAML:true ``` to the Kubernetes deployment annotation of your Ballerina 
+service, so that it will create a single Kubernetes deployment artifact. 
 - Then you can build the Ballerina service using ``$ ballerina build time_service.bal``. You should be able to see the following output. 
 
 
 ```` 
-4ballerina build time_service.bal
+$ ballerina build time_service.bal
 @kubernetes:Service 			 - complete 1/1
 @kubernetes:Ingress 			 - complete 1/1
 @kubernetes:Docker 			 - complete 3/3
@@ -130,13 +157,11 @@ kubectl apply -f /Users/kasun/Dev/Source/git/kasun04/ballerina-guides/using-kube
 ````
     
 ## Deployment                                                                                                                                    
-- By default Ballerina build creates Kubernetes artifacts in multiple .yaml files. For Istio we need to have a single file with all the artifacts. 
-Hence you can simply create a new file and copy the content of all he generated artifacts to it. For example you can refer [time_service_all_in_one.yaml](./kubernetes/time_service_all_in_one.yaml). 
 - Before deploying the service on Istio, you need to do few modifications to the deployment descriptors. 
 - Updating ingress definition : Please remove `` host: "listener.com"`` and ``tls - hosts: [] :`` section. 
 And also make sure that Ingress class is set to `` kubernetes.io/ingress.class: "istio"`` and remove ``nginx.ingress.kubernetes.io/ssl-passthrough: "false"`` if exists. 
 - Updating service definition : Please update ``protocol: "TCP"`` to ``name: "http"``. 
-- Please refer [time_service_all_in_one.yaml](./kubernetes/time_service_all_in_one.yaml) which contains all the aforementioned changes. 
+- Please refer [time_service.yaml](./kubernetes/time_service.yaml) which contains all the aforementioned changes. 
 
 - Now you are all set to deploy your Ballerina service on Istio. To do that you need to inject the sidecar into your service's deployment descriptors. You can do that by executing: 
 
