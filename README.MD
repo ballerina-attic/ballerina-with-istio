@@ -173,7 +173,7 @@ $istioctl kube-inject -f time_service_all_in_one.yaml -o time_service_k8s_istio_
 $ kubectl apply -f time_service_k8s_istio_injected.yaml 
 ```
 
-- You can verify the deployment by checking the pod, service and ingress. Also, you can verify that your service is running along with a Istio sidecar proxy by `` ubectl describe pod < include your ballerina-time-service pod name>``. 
+- You can verify the deployment by checking the pod, service and ingress. Also, you can verify that your service is running along with a Istio sidecar proxy by `` kubectl describe pod < include your ballerina-time-service pod name>``. 
 
 ## Testing 
 
