@@ -20,6 +20,11 @@ This service is deployed alongside Istio's Envoy sidecar and you will use observ
 ![Ballerina on Istio](images/Istio.svg "Ballerina on Istio")
 The Ballerina service is exposed via the sidecar proxy and the client accesses the service via the sidecar. All the metrics and tracing related activities are enforced at the sidecar and they are transparent to the service code.
 
+## Compatibility
+| Ballerina Language Version | Istio version                                                            |
+| -------------------------- | ----------------------------------------------------------------------- |
+| 0.975.0                    | [Istio 0.7.1 - March 2018](https://github.com/istio/istio/releases/tag/0.7.1) |
+
 ## Prerequisites
  
 - [Ballerina Distribution](https://ballerina.io/learn/getting-started/)
@@ -143,10 +148,10 @@ You can build the Ballerina service using `$ ballerina build time_service.bal`. 
 
 ```` 
 $ ballerina build time_service.bal
-@kubernetes:Service 			 - complete 1/1
-@kubernetes:Ingress 			 - complete 1/1
-@kubernetes:Docker 			 - complete 3/3
-@kubernetes:Deployment 			 - complete 1/1
+@kubernetes:Service             - complete 1/1
+@kubernetes:Ingress             - complete 1/1
+@kubernetes:Docker              - complete 3/3
+@kubernetes:Deployment          - complete 1/1
 
 Run following command to deploy kubernetes artifacts:
 kubectl apply -f /Users/kasun/Dev/Source/git/kasun04/ballerina-guides/using-kubernetes/src/kubernetes/
@@ -162,7 +167,7 @@ And also make sure that Ingress class is set to `` kubernetes.io/ingress.class: 
 Now you are all set to deploy your Ballerina service on Istio. To do that you need to inject the sidecar into your service's deployment descriptors. You can do that by executing the following.
 
 ``` 
-$istioctl kube-inject -f time_service_all_in_one.yaml -o time_service_k8s_istio_injected.yaml
+$ istioctl kube-inject -f time_service.yaml -o time_service_k8s_istio_injected.yaml
 ```
 
 Finally, you can deploy the Istio sidecar injected service using the following command. 
@@ -182,7 +187,7 @@ If you are running Istio on Minikube you need to find the ingress URL of Istio t
 Then you can access the Ballerina service as follows. 
 
 ``` 
-$curl http://<minikube_ip>:<istio_ingress_node_port>/localtime
+$ curl http://<minikube_ip>:<istio_ingress_node_port>/localtime
 {"currentTime":"2018-05-01T21:47:53"}
 ``` 
 
