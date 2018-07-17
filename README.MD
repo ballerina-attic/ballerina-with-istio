@@ -94,8 +94,6 @@ endpoint http:Listener listener {
 @kubernetes:Deployment {
     image: "ballerina-time-service",
     name: "ballerina-time-service",
-    dockerHost:"tcp://192.168.99.100:2376",
-    dockerCertPath:"/<Home Dir>/.minikube/certs",
     singleYAML:true
 }
 
@@ -115,7 +113,9 @@ service<http:Service> time bind listener {
 }
 ```
 
-Please note that we have to override the default Ingress class to `ingressClass:"istio"` and if you are using Minikube, you need to specify `dockerHost` and `dockerCertPath` in you deployment annotations. For example, you can have the following Kubernetes annotations. 
+- Please note that we have to override the default Ingress class to `ingressClass:"istio"` 
+- If you are using Minikube, you need to specify `dockerHost` and `dockerCertPath` in you deployment annotations. For example, you can have the following Kubernetes annotations.
+ 
 
 ``` ballerina
 @kubernetes:Ingress {
@@ -135,8 +135,8 @@ endpoint http:Listener listener {
 @kubernetes:Deployment {
     image: "ballerina-time-service",
     name: "ballerina-time-service",
-    dockerHost:"tcp://192.168.99.100:2376",
-    dockerCertPath:"/Users/kasun/.minikube/certs",
+    dockerHost:"tcp://<minikube ip>:2376", // IP can be obtained via `minikube ip` command
+    dockerCertPath:"<Home Dir>/.minikube/certs",
     singleYAML:true
 }
 
@@ -168,6 +168,7 @@ Generating executable
 - Updating ingress definition : 
     - Remove `` host: "listener.com"`` and ``tls - hosts: [] :`` section. 
     - Final ingress definition should look like below. 
+    
     ```yaml
         ---
         apiVersion: "extensions/v1beta1"
@@ -192,6 +193,7 @@ Generating executable
 - Updating service definition : 
     - Replace ``protocol: "TCP"`` with ``name: "http"`` in service definition. 
     - Final service definition should look like below.
+    
     ```yaml
       ---
       apiVersion: "v1"

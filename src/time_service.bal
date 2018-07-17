@@ -22,8 +22,6 @@ endpoint http:Listener listener {
 @kubernetes:Deployment {
     image: "ballerina-time-service",
     name: "ballerina-time-service",
-    dockerHost:"tcp://192.168.99.100:2376",
-    dockerCertPath:"/Users/kasun/.minikube/certs",
     singleYAML:true
 }
 
