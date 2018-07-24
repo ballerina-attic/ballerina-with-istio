@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/ballerina-guides/ballerina-with-istio.svg?branch=master)](https://travis-ci.org/ballerina-guides/ballerina-with-istio)
 
 # Running Ballerina with Istio 
 [Istio](https://istio.io/) provides an easy way to create a network of deployed services with load balancing, service-to-service authentication, monitoring, and more, without requiring any changes in service code. 
