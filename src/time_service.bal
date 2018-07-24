@@ -3,13 +3,6 @@ import ballerina/io;
 import ballerina/time;
 import ballerinax/kubernetes;
 
-
-@kubernetes:Ingress {
-    name:"ballerina-time-service",
-    path:"/localtime",
-    ingressClass:"istio"
-}
-
 @kubernetes:Service {
     serviceType:"NodePort",
     name:"ballerina-time-service"
@@ -18,12 +11,9 @@ endpoint http:Listener listener {
     port:9095
 };
 
-
 @kubernetes:Deployment {
     image: "ballerina-time-service",
     name: "ballerina-time-service",
-    dockerHost:"tcp://192.168.99.100:2376",
-    dockerCertPath:"/Users/kasun/.minikube/certs",
     singleYAML:true
 }
 
