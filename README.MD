@@ -154,85 +154,75 @@ Compiling source
 
 Generating executable
     ./target/time_service.balx
-        @kubernetes:Service                      - complete 1/1
-        @kubernetes:Ingress                      - complete 1/1
-        @kubernetes:Deployment                   - complete 1/1
-        @kubernetes:Docker                       - complete 3/3 
+	@kubernetes:Service 			- complete 1/1
+	@kubernetes:Deployment 			- complete 1/1
+	@kubernetes:Docker 			    - complete 3/3
 
-        Run following command to deploy kubernetes artifacts: 
-        kubectl apply -f /Users/anuruddha/workspace/ballerinax/guide-test/ballerina-with-istio/src/kubernetes/
+	Run following command to deploy kubernetes artifacts:
+	kubectl apply -f /Users/kasun/Dev/Source/git/kasun04/ballerina-guides/ballerina-with-istio/src/kubernetes/
+
 ```
     
 ## Deployment                                                                                                                                    
 - Before deploying the service on Istio, you need to do few modifications to the deployment descriptors.
 - Open generated ``kubernetes/time_service.yaml`` file. 
-- Updating ingress definition : 
-    - Remove `` host: "listener.com"`` and ``tls - hosts: [] :`` section. 
-    - Final ingress definition should look like below. 
+- Updating the generated ``time_service.yaml`` with the Istio Gateway and VirtualService definitions. 
     
     ```yaml
-        ---
-        apiVersion: "extensions/v1beta1"
-        kind: "Ingress"
-        metadata:
-          annotations:
-            kubernetes.io/ingress.class: "istio"
-          finalizers: []
-          labels:
-            app: "time_service"
-          name: "ballerina-time-service"
-          ownerReferences: []
-        spec:
-          rules:
-          - http:
-              paths:
-              - backend:
-                  serviceName: "ballerina-time-service"
-                  servicePort: 9095
-                path: "/localtime"
+    ---
+    apiVersion: networking.istio.io/v1alpha3
+    kind: Gateway
+    metadata:
+    name: ballerina-time-service-gateway
+    spec:
+    selector:
+        istio: ingressgateway # use istio default controller
+    servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+        hosts:
+        - "*"
+    ---
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+    name: ballerina-time-service
+    spec:
+    hosts:
+    - "*"
+    gateways:
+    - ballerina-time-service-gateway
+    http:
+    - match:
+        - uri:
+            exact: /localtime
+        route:
+        - destination:
+            host: ballerina-time-service
+            port:
+          number: 9095
     ```
-- Updating service definition : 
-    - Replace ``protocol: "TCP"`` with ``name: "http"`` in service definition. 
-    - Final service definition should look like below.
-    
-    ```yaml
-      ---
-      apiVersion: "v1"
-      kind: "Service"
-      metadata:
-        annotations: {}
-        finalizers: []
-        labels:
-          app: "time_service"
-        name: "ballerina-time-service"
-        ownerReferences: []
-      spec:
-        externalIPs: []
-        loadBalancerSourceRanges: []
-        ports:
-        - port: 9095
-          name: "http"
-          targetPort: 9095
-        selector:
-          app: "time_service"
-        type: "NodePort"
-    ```
+
 - Please refer [time_service.yaml](./kubernetes/time_service.yaml), which contains all the aforementioned changes. 
 
 Now you are all set to deploy your Ballerina service on Istio. To do that you need to inject the sidecar into your service's deployment descriptors. You can do that by executing the following.
 
 ```bash 
 $ cd kubernetes/
-$ istioctl kube-inject -f time_service.yaml -o time_service_k8s_istio_injected.yaml
+$ istioctl kube-inject -f time_service.yaml -o time_service_istio_injected.yaml
 ```
 
 Finally, you can deploy the Istio sidecar injected service using the following command. 
 
 ``` bash
-$ kubectl apply -f time_service_k8s_istio_injected.yaml
-service "ballerina-time-service" created
-ingress.extensions "ballerina-time-service" created
-deployment.extensions "ballerina-time-service" created 
+$ kubectl apply -f time_service_istio_injected.yaml
+    service/ballerina-time-service created
+    deployment.extensions/ballerina-time-service created
+    gateway.networking.istio.io/ballerina-time-service-gateway created
+    virtualservice.networking.istio.io/ballerina-time-service created
+
 ```
 
 You can verify the deployment by checking the pod, service, and ingress. Also, you can verify that your service is running along with a Istio sidecar proxy using `kubectl describe pod < include your ballerina-time-service pod name>`. 
@@ -241,16 +231,21 @@ You can verify the deployment by checking the pod, service, and ingress. Also, y
 
 You can invoke the Ballerina service that you have deployed above via Istio. 
 
-If you are running Istio on Minikube you need to find the ingress URL of Istio to access your service. For that you have to determine the Minikube host name (you can find this with `$minikube ip`) and the NodePort for Istio ingress using `kubectl get svc istio-ingress -n istio-system -o 'jsonpath={.spec.ports[0].nodePort}'`. 
-
-Then you can access the Ballerina service as follows. 
-
+If you are running on Docker for Mac Edge with Kubernetes, then you can access the service with: 
 ``` bash
-$ curl http://<minikube_ip>:<istio_ingress_node_port>/localtime
-{"currentTime":"2018-05-01T21:47:53"}
+curl http://localhost/localtime
+{"currentTime":"2018-07-24T21:21:44"}
 ``` 
 
-If you are using Docker for Mac OSX you should be able to access it via `http://localhost/localtime`. 
+If you are on Docker with Minikube, you may use the appropriate URL to invoke the service. 
+You need to follow the [instructions](https://preliminary.istio.io/docs/tasks/traffic-management/ingress.html#determining-the-ingress-ip-and-ports) to set the INGRESS_HOST and INGRESS_PORT variables. 
+
+
+``` bash
+export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+curl http://$GATEWAY_URL/localtime 
+
+``` 
 
 ## Observability 
 Now you can use Istio's observability capabilities to observe your Ballerina service. 
