@@ -3,13 +3,6 @@ import ballerina/io;
 import ballerina/time;
 import ballerinax/kubernetes;
 
-
-@kubernetes:Ingress {
-    name:"ballerina-time-service",
-    path:"/localtime",
-    ingressClass:"istio"
-}
-
 @kubernetes:Service {
     serviceType:"NodePort",
     name:"ballerina-time-service"
@@ -17,7 +10,6 @@ import ballerinax/kubernetes;
 endpoint http:Listener listener {
     port:9095
 };
-
 
 @kubernetes:Deployment {
     image: "ballerina-time-service",
