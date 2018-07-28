@@ -24,7 +24,7 @@ The Ballerina service is exposed via the sidecar proxy and the client accesses t
 ## Compatibility
 | Ballerina Language Version | Istio version                                                            |
 | -------------------------- | ----------------------------------------------------------------------- |
-| 0.980.0                    | [Istio 0.7.1 - March 2018](https://github.com/istio/istio/releases/tag/0.7.1) |
+| 0.980.0                    | [Istio 0.8.0 - May 2018](https://github.com/istio/istio/releases/tag/0.8.0) |
 
 ## Prerequisites
  
