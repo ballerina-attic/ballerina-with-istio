@@ -22,9 +22,9 @@ This service is deployed alongside Istio's Envoy sidecar and you will use observ
 The Ballerina service is exposed via the sidecar proxy and the client accesses the service via the sidecar. All the metrics and tracing related activities are enforced at the sidecar and they are transparent to the service code.
 
 ## Compatibility
-| Ballerina Language Version | Istio version                                                            |
-| -------------------------- | ----------------------------------------------------------------------- |
-| 0.980.0                    | [Istio 0.8.0 - May 2018](https://github.com/istio/istio/releases/tag/0.8.0) |
+| Ballerina Language Version | Istio version                                                               |
+| -------------------------- | --------------------------------------------------------------------------- |
+| 0.981.0                    | [Istio 0.8.0 - May 2018](https://github.com/istio/istio/releases/tag/0.8.0) |
 
 ## Prerequisites
  
@@ -153,14 +153,13 @@ Compiling source
     time_service.bal
 
 Generating executable
-    ./target/time_service.balx
-	@kubernetes:Service 			- complete 1/1
-	@kubernetes:Deployment 			- complete 1/1
-	@kubernetes:Docker 			    - complete 3/3
+    time_service.balx
+        @kubernetes:Service                      - complete 1/1
+        @kubernetes:Deployment                   - complete 1/1
+        @kubernetes:Docker                       - complete 3/3
 
-	Run following command to deploy kubernetes artifacts:
-	kubectl apply -f /Users/kasun/Dev/Source/git/kasun04/ballerina-guides/ballerina-with-istio/src/kubernetes/
-
+        Run the following command to deploy the Kubernetes artifacts:
+        kubectl apply -f /home/wso2/projects/ballerina-with-istio/src/kubernetes/
 ```
     
 ## Deployment                                                                                                                                    
@@ -218,6 +217,7 @@ Finally, you can deploy the Istio sidecar injected service using the following c
 
 ``` bash
 $ kubectl apply -f time_service_istio_injected.yaml
+
     service/ballerina-time-service created
     deployment.extensions/ballerina-time-service created
     gateway.networking.istio.io/ballerina-time-service-gateway created
@@ -267,4 +267,3 @@ Now you can use Istio's observability capabilities to observe your Ballerina ser
 - You can observe the metrics for your Ballerina service as shown below. 
 ![Tracing with Istio Dashboard](images/istio-graf1.png "Tracing with Istio Dashboard")
 ![Tracing with Istio Dashboard](images/istio-graf2.png "Tracing with Istio Dashboard")
-
