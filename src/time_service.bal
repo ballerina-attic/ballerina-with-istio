@@ -3,6 +3,11 @@ import ballerina/io;
 import ballerina/time;
 import ballerinax/kubernetes;
 
+@kubernetes:Ingress {
+    name:"ballerina-time-service",
+    path:"/localtime",
+    ingressClass:"istio"
+}
 @kubernetes:Service {
     serviceType:"NodePort",
     name:"ballerina-time-service"
@@ -16,11 +21,11 @@ endpoint http:Listener listener {
     name: "ballerina-time-service",
     singleYAML:true
 }
-
 @http:ServiceConfig {basePath:"/localtime"}
 service<http:Service> time bind listener {
     @http:ResourceConfig{
-        path: "/",  methods: ["GET"]
+        path: "/",
+        methods: ["GET"]
     }
     getTime (endpoint caller, http:Request request) {
         http:Response response = new;
