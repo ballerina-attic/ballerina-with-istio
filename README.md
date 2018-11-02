@@ -49,12 +49,12 @@ import ballerina/io;
 import ballerina/time;
 
 endpoint http:Listener listener {
-    port:9095
+    port: 9095
 };
 
-@http:ServiceConfig {basePath:"/localtime"}
+@http:ServiceConfig { basePath:"/localtime" }
 service<http:Service> time bind listener {
-    @http:ResourceConfig{
+    @http:ResourceConfig {
         path: "/",
         methods: ["GET"]
     }
@@ -62,7 +62,7 @@ service<http:Service> time bind listener {
         http:Response response = new;
         time:Time currentTime = time:currentTime();
         string customTimeString = currentTime.format("yyyy-MM-dd'T'HH:mm:ss");
-        json timeJ = {currentTime : customTimeString };
+        json timeJ = { currentTime : customTimeString };
         response.setJsonPayload(timeJ);
         _ = caller -> respond(response);
     }
@@ -77,29 +77,27 @@ import ballerina/io;
 import ballerina/time;
 import ballerinax/kubernetes;
 
-
 @kubernetes:Ingress {
-    name:"ballerina-time-service",
-    path:"/localtime",
-    ingressClass:"istio"
+    name: "ballerina-time-service",
+    path: "/localtime",
+    ingressClass: "istio"
 }
 @kubernetes:Service {
-    serviceType:"NodePort",
-    name:"ballerina-time-service"
+    serviceType: "NodePort",
+    name: "ballerina-time-service"
 }
 endpoint http:Listener listener {
-    port:9095
+    port: 9095
 };
-
 
 @kubernetes:Deployment {
     image: "ballerina-time-service",
     name: "ballerina-time-service",
-    singleYAML:true
+    singleYAML: true
 }
 @http:ServiceConfig {basePath:"/localtime"}
 service<http:Service> time bind listener {
-    @http:ResourceConfig{
+    @http:ResourceConfig {
         path: "/",  
         methods: ["GET"]
     }
@@ -120,29 +118,28 @@ service<http:Service> time bind listener {
 
 ``` ballerina
 @kubernetes:Ingress {
-    name:"ballerina-time-service",
-    path:"/localtime",
-    ingressClass:"istio"
+    name: "ballerina-time-service",
+    path: "/localtime",
+    ingressClass: "istio"
 }
 @kubernetes:Service {
-    serviceType:"NodePort",
-    name:"ballerina-time-service"
+    serviceType: "NodePort",
+    name: "ballerina-time-service"
 }
 endpoint http:Listener listener {
-    port:9095
+    port: 9095
 };
 
 @kubernetes:Deployment {
     image: "ballerina-time-service",
     name: "ballerina-time-service",
-    dockerHost:"tcp://<minikube ip>:2376", // IP can be obtained via `minikube ip` command
-    dockerCertPath:"<Home Dir>/.minikube/certs",
-    singleYAML:true
+    dockerHost: "tcp://<minikube ip>:2376", // IP can be obtained via `minikube ip` command
+    dockerCertPath: "<Home Dir>/.minikube/certs",
+    singleYAML: true
 }
-
 ```
 
-By default, Ballerina build creates Kubernetes artifacts in multiple .yaml files. You can override this by adding `singleYAML:true` to the Kubernetes deployment annotation of your Ballerina service, so that it creates a single Kubernetes deployment artifact. 
+By default, Ballerina build creates Kubernetes artifacts in multiple .yaml files. You can override this by adding `singleYAML: true` to the Kubernetes deployment annotation of your Ballerina service, so that it creates a single Kubernetes deployment artifact. 
 
 You can build the Ballerina service using `$ ballerina build time_service.bal`. You should be able to see the following output. 
 
@@ -160,10 +157,10 @@ Generating executable
         @kubernetes:Helm 			 - complete 1/1
 
         Run the following command to deploy the Kubernetes artifacts: 
-        kubectl apply -f /home/pubudu/wso2/bbg/ballerina-with-istio/src/kubernetes/
+        kubectl apply -f /home/ballerina/ballerina-with-istio/src/kubernetes/
 
         Run the following command to install the application using Helm: 
-        helm install --name ballerina-time-service /home/pubudu/wso2/bbg/ballerina-with-istio/src/kubernetes/ballerina-time-service
+        helm install --name ballerina-time-service /home/ballerina/ballerina-with-istio/src/kubernetes/ballerina-time-service
 ```
     
 ## Deployment                                                                                                                                    
@@ -222,14 +219,15 @@ Finally, you can deploy the Istio sidecar injected service using the following c
 ``` bash
 $ kubectl apply -f time_service_istio_injected.yaml
 
-    service/ballerina-time-service created
-    deployment.extensions/ballerina-time-service created
-    gateway.networking.istio.io/ballerina-time-service-gateway created
-    virtualservice.networking.istio.io/ballerina-time-service created
+    service "ballerina-time-service" created
+    ingress "ballerina-time-service" configured
+    deployment "ballerina-time-service" configured
+    gateway "ballerina-time-service-gateway" created
+    virtualservice "ballerina-time-service" created
 
 ```
 
-You can verify the deployment by checking the pod, service, and ingress. Also, you can verify that your service is running along with a Istio sidecar proxy using `kubectl describe pod < include your ballerina-time-service pod name>`. 
+You can verify the deployment by checking the pod, service, and ingress. Also, you can verify that your service is running along with a Istio sidecar proxy using `kubectl describe pod <include your ballerina-time-service pod name>`. 
 
 ## Testing 
 

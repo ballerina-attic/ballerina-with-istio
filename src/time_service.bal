@@ -4,26 +4,26 @@ import ballerina/time;
 import ballerinax/kubernetes;
 
 @kubernetes:Ingress {
-    name:"ballerina-time-service",
-    path:"/localtime",
-    ingressClass:"istio"
+    name: "ballerina-time-service",
+    path: "/localtime",
+    ingressClass: "istio"
 }
 @kubernetes:Service {
-    serviceType:"NodePort",
-    name:"ballerina-time-service"
+    serviceType: "NodePort",
+    name: "ballerina-time-service"
 }
 endpoint http:Listener listener {
-    port:9095
+    port: 9095
 };
 
 @kubernetes:Deployment {
     image: "ballerina-time-service",
     name: "ballerina-time-service",
-    singleYAML:true
+    singleYAML: true
 }
-@http:ServiceConfig {basePath:"/localtime"}
+@http:ServiceConfig { basePath:"/localtime" }
 service<http:Service> time bind listener {
-    @http:ResourceConfig{
+    @http:ResourceConfig {
         path: "/",
         methods: ["GET"]
     }
