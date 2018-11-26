@@ -7,7 +7,7 @@ import ballerinax/kubernetes;
 @kubernetes:Service {
     name: "ballerina-time-service"
 }
-listener http:Server timeEP = new http:Server(9095);
+listener http:Listener timeEP = new(9095);
 
 @kubernetes:Deployment {
     image: "ballerina-time-service",

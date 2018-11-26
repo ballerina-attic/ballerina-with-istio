@@ -47,7 +47,7 @@ As the first step, you can build a Ballerina service that gives the current time
 import ballerina/http;
 import ballerina/time;
 
-listener http:Server timeEP = new http:Server(9095);
+listener http:Listener timeEP = new(9095);
 
 @http:ServiceConfig { basePath:"/localtime" }
 service time on timeEP {
@@ -80,7 +80,7 @@ import ballerinax/kubernetes;
 @kubernetes:Service {
     name: "ballerina-time-service"
 }
-listener http:Server timeEP = new http:Server(9095);
+listener http:Listener timeEP = new(9095);
 
 @kubernetes:Deployment {
     image: "ballerina-time-service",
@@ -115,7 +115,7 @@ service time on timeEP {
 @kubernetes:Service {
     name: "ballerina-time-service"
 }
-listener http:Server timeEP = new http:Server(9095);
+listener http:Listener timeEP = new(9095);
 
 @kubernetes:Deployment {
     image: "ballerina-time-service",
