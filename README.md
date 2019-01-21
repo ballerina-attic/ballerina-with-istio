@@ -32,9 +32,9 @@ The Ballerina service is exposed via the sidecar proxy and the client accesses t
 - A Text Editor or an IDE 
 > **Tip**: You can install the following Ballerina IDE plugins: [VSCode](https://marketplace.visualstudio.com/items?itemName=ballerina.ballerina), [IntelliJ IDEA](https://plugins.jetbrains.com/plugin/9520-ballerina)
 - [Docker](https://docs.docker.com/engine/installation/)
-- [Install Kubernetes.](https://kubernetes.io/docs/setup/)  
-- [Istio installation](https://archive.istio.io/v0.8/docs/setup/kubernetes/quick-start/).
-- Install [Jaegar](https://archive.istio.io/v0.7/docs/tasks/telemetry/distributed-tracing.html) and [Grafana](https://archive.istio.io/v0.7/docs/tasks/telemetry/using-istio-dashboard.html) addons for Istio. 
+- [Kubernetes](https://kubernetes.io/docs/setup/)  
+- [Istio](https://archive.istio.io/v0.8/docs/setup/kubernetes/quick-start/)
+- [Jaegar](https://archive.istio.io/v0.7/docs/tasks/telemetry/distributed-tracing.html) and [Grafana](https://archive.istio.io/v0.7/docs/tasks/telemetry/using-istio-dashboard.html) addons for Istio
 
 ## Implementation
 
