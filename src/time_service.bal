@@ -15,7 +15,7 @@ listener http:Listener timeEP = new(9095);
     name: "ballerina-time-service",
     singleYAML: true
 }
-@http:ServiceConfig { basePath: "/localtime" }
+@http:ServiceConfig { basePath:"/localtime" }
 service time on timeEP {
     @http:ResourceConfig {
         path: "/",
@@ -23,7 +23,7 @@ service time on timeEP {
     }
     resource function getTime (http:Caller caller, http:Request request) {
         time:Time currentTime = time:currentTime();
-        string customTimeString = currentTime.format("yyyy-MM-dd'T'HH:mm:ss");
+        string customTimeString = time:format(currentTime, "yyyy-MM-dd'T'HH:mm:ss");
         json timeJ = { currentTime: customTimeString };
         var responseResult = caller->respond(timeJ);
         if (responseResult is error) {

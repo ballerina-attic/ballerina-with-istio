@@ -24,7 +24,7 @@ The Ballerina service is exposed via the sidecar proxy and the client accesses t
 ## Compatibility
 | Ballerina Language Version | Istio version                                                               |
 | -------------------------- | --------------------------------------------------------------------------- |
-| 0.990.0                    | [Istio 0.8.0 - May 2018](https://github.com/istio/istio/releases/tag/0.8.0) |
+| 0.990.3                    | [Istio 0.8.0 - May 2018](https://github.com/istio/istio/releases/tag/0.8.0) |
 
 ## Prerequisites
  
@@ -42,6 +42,7 @@ As the first step, you can build a Ballerina service that gives the current time
 
 ```ballerina
 import ballerina/http;
+import ballerina/log;
 import ballerina/time;
 
 listener http:Listener timeEP = new(9095);
@@ -54,7 +55,7 @@ service time on timeEP {
     }
     resource function getTime (http:Caller caller, http:Request request) {
         time:Time currentTime = time:currentTime();
-        string customTimeString = currentTime.format("yyyy-MM-dd'T'HH:mm:ss");
+        string customTimeString = time:format(currentTime, "yyyy-MM-dd'T'HH:mm:ss");
         json timeJ = { currentTime: customTimeString };
         var responseResult = caller->respond(timeJ);
         if (responseResult is error) {
@@ -69,6 +70,7 @@ Now you can add the Kubernetes annotations that are required to generate the Kub
 
 ```ballerina
 import ballerina/http;
+import ballerina/log;
 import ballerina/time;
 import ballerinax/kubernetes;
 
@@ -92,7 +94,7 @@ service time on timeEP {
     }
     resource function getTime (http:Caller caller, http:Request request) {
         time:Time currentTime = time:currentTime();
-        string customTimeString = currentTime.format("yyyy-MM-dd'T'HH:mm:ss");
+        string customTimeString = time:format(currentTime, "yyyy-MM-dd'T'HH:mm:ss");
         json timeJ = { currentTime: customTimeString };
         var responseResult = caller->respond(timeJ);
         if (responseResult is error) {
