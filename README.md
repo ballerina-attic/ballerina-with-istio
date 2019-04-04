@@ -47,7 +47,7 @@ import ballerina/time;
 
 listener http:Listener timeEP = new(9095);
 
-@http:ServiceConfig { basePath:"/localtime" }
+@http:ServiceConfig { basePath: "/localtime" }
 service time on timeEP {
     @http:ResourceConfig {
         path: "/",
@@ -55,27 +55,39 @@ service time on timeEP {
     }
     resource function getTime (http:Caller caller, http:Request request) {
         time:Time currentTime = time:currentTime();
-        string customTimeString = time:format(currentTime, "yyyy-MM-dd'T'HH:mm:ss");
-        json timeJ = { currentTime: customTimeString };
-        var responseResult = caller->respond(timeJ);
-        if (responseResult is error) {
-            log:printError("Error responding back to client");
+        var customTimeString = time:format(currentTime, "yyyy-MM-dd'T'HH:mm:ss");
+        if (customTimeString is string) {
+            json timeJ = { currentTime: customTimeString };
+            var responseResult = caller->respond(timeJ);
+            if (responseResult is error) {
+                log:printError("Error responding back to client");
+            }
+        } else {
+            http:Response errorResponse = new;
+            json errorJson = { errorMsg: "internal server error occurred" };
+            errorResponse.setPayload(errorJson);
+            errorResponse.statusCode = 500;
+            var responseResult = caller->respond(errorResponse);
+            if (responseResult is error) {
+                log:printError("Error responding back to client");
+            }
         }
     }
 }
 
 ```
 
-Now you can add the Kubernetes annotations that are required to generate the Kubernetes deployment artifacts. 
+Now you can add the Kubernetes and istio annotations that are required to generate the Kubernetes and Istio deployment artifacts. 
 
 ```ballerina
 import ballerina/http;
 import ballerina/log;
 import ballerina/time;
 import ballerinax/kubernetes;
+import ballerinax/istio;
 
-@kubernetes:IstioGateway {}
-@kubernetes:IstioVirtualService {}
+@istio:Gateway {}
+@istio:VirtualService {}
 @kubernetes:Service {
     name: "ballerina-time-service"
 }
@@ -83,10 +95,9 @@ listener http:Listener timeEP = new(9095);
 
 @kubernetes:Deployment {
     image: "ballerina-time-service",
-    name: "ballerina-time-service",
-    singleYAML: true
+    name: "ballerina-time-service"
 }
-@http:ServiceConfig { basePath:"/localtime" }
+@http:ServiceConfig { basePath: "/localtime" }
 service time on timeEP {
     @http:ResourceConfig {
         path: "/",
@@ -94,14 +105,26 @@ service time on timeEP {
     }
     resource function getTime (http:Caller caller, http:Request request) {
         time:Time currentTime = time:currentTime();
-        string customTimeString = time:format(currentTime, "yyyy-MM-dd'T'HH:mm:ss");
-        json timeJ = { currentTime: customTimeString };
-        var responseResult = caller->respond(timeJ);
-        if (responseResult is error) {
-            log:printError("Error responding back to client");
+        var customTimeString = time:format(currentTime, "yyyy-MM-dd'T'HH:mm:ss");
+        if (customTimeString is string) {
+            json timeJ = { currentTime: customTimeString };
+            var responseResult = caller->respond(timeJ);
+            if (responseResult is error) {
+                log:printError("Error responding back to client");
+            }
+        } else {
+            http:Response errorResponse = new;
+            json errorJson = { errorMsg: "internal server error occurred" };
+            errorResponse.setPayload(errorJson);
+            errorResponse.statusCode = 500;
+            var responseResult = caller->respond(errorResponse);
+            if (responseResult is error) {
+                log:printError("Error responding back to client");
+            }
         }
     }
 }
+
 
 ```
 
@@ -109,8 +132,8 @@ service time on timeEP {
  
 
 ``` ballerina
-@kubernetes:IstioGateway {}
-@kubernetes:IstioVirtualService {}
+@istio:Gateway {}
+@istio:VirtualService {}
 @kubernetes:Service {
     name: "ballerina-time-service"
 }
@@ -121,7 +144,6 @@ listener http:Listener timeEP = new(9095);
     name: "ballerina-time-service",
     dockerHost: "tcp://<minikube ip>:2376", // IP can be obtained via `minikube ip` command
     dockerCertPath: "<Home Dir>/.minikube/certs",
-    singleYAML: true
 }
 ```
 
@@ -135,18 +157,19 @@ Compiling source
     time_service.bal
 Generating executable
     time_service.balx
+
 	@kubernetes:Service 			 - complete 1/1
 	@kubernetes:Deployment 			 - complete 1/1
 	@kubernetes:Docker 			 - complete 3/3
 	@kubernetes:Helm 			 - complete 1/1
-	@kubernetes:IstioGatewayModel 		 - complete 1/1
-	@kubernetes:IstioVirtualService 	 - complete 1/1
+	@istio:Gateway 				 - complete 1/1
+	@istio:VirtualService 			 - complete 1/1
 
 	Run the following command to deploy the Kubernetes artifacts:
-	kubectl apply -f /home/ballerina/ballerina-with-istio/src/kubernetes/
+	kubectl apply -f /home/ballerina-with-istio/src/kubernetes/time_service
 
 	Run the following command to install the application using Helm:
-	helm install --name ballerina-time-service /home/ballerina/ballerina-with-istio/src/kubernetes/ballerina-time-service
+	helm install --name ballerina-time-service /home/ballerina-with-istio/src/kubernetes/time_service/ballerina-time-service
 ```
     
 Now you are all set to deploy your Ballerina service on Istio. To do that you need to inject the sidecar into your service's deployment descriptors. You can do that by executing the following.
